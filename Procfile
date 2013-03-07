@@ -1,1 +1,1 @@
-web: gunicorn hellodjango.wsgi
+web: gunicorn facebook_likes_scraping.wsgi
