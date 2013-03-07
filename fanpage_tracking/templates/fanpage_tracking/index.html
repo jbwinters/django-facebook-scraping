@@ -1,10 +1,51 @@
-{% if fanpage_likes %}
-    <ul>
-    {% for fanpage, likes in fanpage_likes %}
-        <li>{{fanpage}}: {{likes}}</li>
-    {% endfor %}
-    </ul>
-{% else %}
-    <p>No fanpages are available.</p>
-{% endif %}
+<html>
+    <head>
+        <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+        <script type="text/javascript">
+            google.load("visualization", "1", {packages:["corechart"]});
+            google.setOnLoadCallback(drawChart);
 
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable([
+                        ['Date', 'Likes'],
+                        {% for record in fanpage_likes %}
+                            ['{{ record.datetime.date }}', {{ record.likes }}],
+                        {% endfor %}
+                        ]);
+
+                var options = {
+                     title: 'Dunkin\' Donuts Facebook Likes',
+                     vAxis: {title: "Likes"},
+                     hAxis: {title: "Date"}
+
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById('DunkinDonutsChart'));
+                chart.draw(data, options);
+            }
+
+            google.load('visualization', '1', {packages:['table']});
+            google.setOnLoadCallback(drawTable);
+            function drawTable() {
+                var data = new google.visualization.DataTable();
+                data.addColumn('string', 'Date');
+                data.addColumn('number', 'Facebook Likes');
+                data.addRows([
+                        {% for record in fanpage_likes %}
+                            ['{{ record.datetime.date }}', {{ record.likes }}],
+                        {% endfor %}
+                        ]);
+
+                var table = new google.visualization.Table(document.getElementById('table_div'));
+                table.draw(data, {showRowNumber: true, width: '300px'});
+            }
+
+        </script>
+  </head>
+<body>
+
+    <div id="DunkinDonutsChart" style="width: 800px; height: 400px; margin:0 auto;"></div>
+    <div id='table_div' style="width: 300px; margin:0 auto;"></div>
+
+</body>
+</html>
